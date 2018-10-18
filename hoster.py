@@ -8,7 +8,7 @@ import sys
 import os
 
 label_name = "hoster.domains"
-enclosing_pattern = "#-----------Docker-Hoster-Domains----------\n"
+enclosing_pattern = "#-----------KN Docker-Hoster-Domains----------\n"
 hosts_path = "/tmp/hosts"
 hosts = {}
 
@@ -61,6 +61,7 @@ def get_container_data(dockerClient, container_id):
     info = dockerClient.inspect_container(container_id)
     container_hostname = info["Config"]["Hostname"]
     container_name = info["Name"].strip("/")
+    container_domainname = info["Config"]["Domainname"]
     container_ip = info["NetworkSettings"]["IPAddress"]
     
     result = []
@@ -73,11 +74,11 @@ def get_container_data(dockerClient, container_id):
         result.append({
                 "ip": values["IPAddress"] , 
                 "name": container_name,
-                "domains": set(values["Aliases"] + [container_name, container_hostname])
+                "domains": set([container_hostname, container_domainname])
             })
 
     if container_ip:
-        result.append({"ip": container_ip, "name": container_name, "domains": [container_name, container_hostname ]})
+        result.append({"ip": container_ip, "name": container_name, "domains": [container_name, container_hostname]})
 
     return result
 
